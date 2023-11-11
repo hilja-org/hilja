@@ -11,12 +11,10 @@ export async function GET(
   },
 ) {
   let responseToStream: Response | undefined;
-  console.log("DEBUG", threadId);
   if (threadId) {
     const messages = await openai.beta.threads.messages.list(threadId, {
       limit: 3,
     });
-    console.log("DEBUG2", messages);
     const latestAssistantMessage = messages.data
       .flat()
       .find(
@@ -25,7 +23,6 @@ export async function GET(
           !!msg.content.find(({ type }) => type === "text"),
       );
     if (latestAssistantMessage) {
-      console.log("DEBUG3", latestAssistantMessage);
       responseToStream = await openai.audio.speech.create({
         model: "tts-1",
         voice: "alloy",
@@ -35,7 +32,6 @@ export async function GET(
           ) ?? Throw("This should never happen")
         ).text.value,
       });
-      console.log("DEBUG4", responseToStream.headers);
     }
   }
   return responseToStream
