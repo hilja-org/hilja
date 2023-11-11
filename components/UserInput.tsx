@@ -16,7 +16,7 @@ export default function UserInput() {
       <VoiceInput
         setUserTextInput={(textInput) => {
           setUserTextInput(textInput);
-          buttonRef.current?.click();
+          setTimeout(() => buttonRef.current?.click(), 100);
         }}
       />
     </>
