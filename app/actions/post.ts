@@ -21,7 +21,7 @@ export async function POST(data: FormData) {
   const run = await openai.beta.threads.runs.create(threadId, {
     assistant_id: assistantId,
     instructions:
-      "The usre knows who you are so there is no need to introduce your self. Focuse on helping the user with their problem.",
+      "The user knows who you are so there is no need to introduce your self. Focus on helping the user with their problem.",
   });
   cookies().set("runId", run.id);
 }

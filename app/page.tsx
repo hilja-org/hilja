@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { Toaster } from "react-hot-toast";
 import { cookies } from "next/headers";
+import { Throw } from "throw-expression";
 import PlaceholderSVG from "../components/PlaceholderSVG";
 import VoiceInputIndicator from "../components/VoiceInputIndicator";
 import Image from "next/image";
@@ -13,6 +14,8 @@ import {
   openai,
   OpenAIRunStatus,
 } from "./openai";
+import type { RunSubmitToolOutputsParams } from "openai/resources/beta/threads/runs/runs";
+import functions from "./openai-functions";
 
 const DEFAULT_API_POLL_INTERVAL = 1000 * 3;
 
@@ -39,7 +42,7 @@ export default async function Page() {
     const threadId = cookies().get("threadId")?.value;
     if (!runId || !threadId) return;
 
-    const run = await openai.beta.threads.runs.retrieve(threadId, runId);
+    let run = await openai.beta.threads.runs.retrieve(threadId, runId);
     if (run.status === OpenAIRunStatus.COMPLETED) {
       console.log("completed");
       const openAiResponse = await openai.beta.threads.messages.list(threadId);
@@ -51,7 +54,30 @@ export default async function Page() {
         DEFAULT_API_POLL_INTERVAL,
       );
     } else if (run.status === OpenAIRunStatus.REQUIRES_ACTION) {
-      console.log("requires action");
+      const { required_action } = run;
+      while (required_action) {
+        run = await openai.beta.threads.runs.submitToolOutputs(
+          threadId,
+          run.id,
+          {
+            tool_outputs: await Promise.all(
+              required_action.submit_tool_outputs.tool_calls.map(
+                async ({
+                  id,
+                  function: { name, arguments: argsString },
+                }): Promise<RunSubmitToolOutputsParams.ToolOutput> => ({
+                  tool_call_id: id,
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unused-vars
+                  output: await (
+                    functions[name] ??
+                    Throw(`Implement support for function "${name}"`)
+                  )(JSON.parse(argsString)),
+                }),
+              ),
+            ),
+          },
+        );
+      }
     } else {
       console.log("I thing there is something wrong state: ", run.status);
     }
