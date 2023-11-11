@@ -13,7 +13,8 @@ module.exports = {
       colors: {
         'dark-teal': '#012A36',
         'teal': '#034F65',
-        'light-blue': '#73CBE6'
+        'light-blue': '#73CBE6',
+        'violet': '#7E52A0'
       },
       keyframes: {
         bounce: {
