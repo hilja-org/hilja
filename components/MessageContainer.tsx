@@ -5,8 +5,8 @@ import { OpenAIRunStatus } from "../app/openai/enum";
 import Image from "next/image";
 import VoiceOutput from "./VoiceOutput";
 import Message from "./Message";
-import type { MessageResponse } from "../app/service/pollopenaistatus";
 import { FORM_INPUT_NAME_USER_INPUT } from "../app/actions/post-shared";
+import type { MessageResponse } from "../app/service/pollopenaistatus";
 
 const DEFAULT_API_POLL_INTERVAL = 1000 * 3;
 
@@ -70,6 +70,11 @@ export default function MessageContainer({ threadId }: { threadId: string }) {
       })
       .catch((err) => {
         console.error(err);
+      })
+      .finally(() => {
+        document
+          .querySelector(`#${FORM_INPUT_NAME_USER_INPUT}`)
+          ?.scrollIntoView({ behavior: "smooth" });
       });
   }, [threadId, runId]);
 
@@ -123,6 +128,7 @@ export default function MessageContainer({ threadId }: { threadId: string }) {
 }
 
 function getCookie(name: string) {
+  if (typeof document === "undefined") return;
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) return parts.pop()?.split(";").shift();
