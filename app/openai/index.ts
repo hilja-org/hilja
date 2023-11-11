@@ -1,6 +1,4 @@
-import exp from "constants";
 import OpenAI from "openai";
-import { type } from "os";
 
 export const assistantId = process.env.OPENAI_ASSISTANT_ID as string;
 export const openai = new OpenAI({
