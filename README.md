@@ -2,7 +2,7 @@
 
 This project generates Twitter bios for you using AI.
 
-[![Twitter Bio Generator](./public/screenshot.png)](https://www.twitterbio.io)
+[![Twitter Bio Generator](./public/screenshot.jpg)](https://www.twitterbio.io)
 
 ## How it works
 

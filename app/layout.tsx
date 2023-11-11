@@ -2,11 +2,12 @@ import { Analytics } from "@vercel/analytics/react";
 import { Metadata } from "next";
 import "../styles/globals.css";
 
-const title = "Twitter Bio Generator";
-const description = "Generate your next Twitter bio in seconds.";
+const title = "Hilja";
+const description =
+  "AI-powered solution providing personalised approach to pain relief, reducing the need for medication";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://twitterbio.io"),
+  metadataBase: new URL("https://hilja.app"),
   title,
   description,
   openGraph: {
@@ -29,6 +30,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <meta name="theme-color" content="#012A36" />
       <body className="bg-dark-teal text-white">
         {children}
         <Analytics />
