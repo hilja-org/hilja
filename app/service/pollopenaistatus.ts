@@ -27,6 +27,11 @@ async function debounceResponse<T>(
   });
 }
 
+type OpenAiMessages = {
+  message: MessageContentText | MessageContentImageFile;
+  role: "user" | "assistant";
+}[];
+
 /**
  * Will poll the API untill there is a resopnse
  */
@@ -34,9 +39,9 @@ export const getMessages = async (
   threadId: string,
 ): Promise<
   | {
-      message: MessageContentText | MessageContentImageFile;
-      role: "user" | "assistant";
-    }[]
+      status: OpenAIRunStatus;
+      messages: OpenAiMessages;
+    }
   | undefined
 > => {
   const runId = cookies().get("runId")?.value;
@@ -46,21 +51,16 @@ export const getMessages = async (
   if (run.status === OpenAIRunStatus.COMPLETED) {
     console.log("completed");
     const openAiResponse = await openai.beta.threads.messages.list(threadId);
-    return openAiResponse.data.map((message) => {
+    const messages = openAiResponse.data.map((message) => {
       return {
         message: message.content[0],
         role: message.role,
       };
     });
-  } else if (
-    run.status === OpenAIRunStatus.IN_PROGRESS ||
-    run.status === OpenAIRunStatus.QUEUED
-  ) {
-    console.log("in progress");
-    return debounceResponse<ReturnType<typeof getMessages>>(
-      () => getMessages(threadId),
-      DEFAULT_API_POLL_INTERVAL,
-    );
+    return {
+      status: run.status as OpenAIRunStatus,
+      messages,
+    };
   } else if (run.status === OpenAIRunStatus.REQUIRES_ACTION) {
     const required_action = run.required_action;
     if (required_action) {
@@ -87,7 +87,12 @@ export const getMessages = async (
         DEFAULT_API_POLL_INTERVAL,
       );
     }
-  } else {
-    console.log("I thing there is something wrong state: ", run.status);
   }
+
+  return makeResponse(run.status);
 };
+
+const makeResponse = (status: string, messages: OpenAiMessages = []) => ({
+  status: status as OpenAIRunStatus,
+  messages,
+});
