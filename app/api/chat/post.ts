@@ -1,6 +1,6 @@
 import { assistantId, openai } from "../../openai";
 
-export default async function POST() {
+export async function POST() {
   const thread = await openai.beta.threads.create();
 
   await openai.beta.threads.messages.create(thread.id, {
