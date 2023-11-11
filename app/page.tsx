@@ -68,8 +68,8 @@ export default async function Page() {
         DEFAULT_API_POLL_INTERVAL,
       );
     } else if (run.status === OpenAIRunStatus.REQUIRES_ACTION) {
-      const { required_action } = run;
-      while (required_action) {
+      const required_action = run.required_action;
+      if (required_action) {
         run = await openai.beta.threads.runs.submitToolOutputs(
           threadId,
           run.id,
@@ -90,6 +90,11 @@ export default async function Page() {
               ),
             ),
           },
+        );
+
+        return redoAgainAndAgain<ReturnType<typeof getStuff>>(
+          getStuff,
+          DEFAULT_API_POLL_INTERVAL,
         );
       }
     } else {
