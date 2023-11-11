@@ -8,9 +8,10 @@ export default function Message({
   children: string | JSX.Element;
   role: "assistant" | "user";
 }) {
-  const youtubeLinks = children.match(
-    /https:\/\/www.youtube.com\/watch\?v=([a-zA-Z0-9_-]+)/g,
-  );
+  const youtubeLinks =
+    typeof children === "string"
+      ? children.match(/https:\/\/www.youtube.com\/watch\?v=([a-zA-Z0-9_-]+)/g)
+      : null;
 
   return (
     <div
@@ -20,19 +21,23 @@ export default function Message({
           : "rounded-bl-none bg-violet/50 hover:bg-violet/40"
       }`}
     >
-      <Markdown
-        components={{
-          a: (props) => {
-            return (
-              <a className="underline" href={props.href}>
-                {props.children}
-              </a>
-            );
-          },
-        }}
-      >
-        {children}
-      </Markdown>
+      {typeof children === "string" ? (
+        <Markdown
+          components={{
+            a: (props) => {
+              return (
+                <a className="underline" href={props.href}>
+                  {props.children}
+                </a>
+              );
+            },
+          }}
+        >
+          {children}
+        </Markdown>
+      ) : (
+        children
+      )}
       {youtubeLinks && (
         <Image
           src={`https://img.youtube.com/vi/${

@@ -105,7 +105,7 @@ export default function MessageContainer({ threadId }: { threadId: string }) {
         })}
       {userCurMsg && (
         <>
-          <Message role="user">{decodeURI(userCurMsg)}</Message>
+          <Message role="user">{decodeURIComponent(userCurMsg)}</Message>
           <Message role="assistant">
             {
               <span className="loading">
