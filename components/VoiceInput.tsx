@@ -13,7 +13,7 @@ export default function VoiceInput({ setUserTextInput }: VoiceInputProps) {
 
   const onAudioInputStart = () => {
     console.log("DEBUG", recognition);
-    if (!recognition || recognition.onresult) {
+    if (!recognition) {
       // Either not initialized, or already listening - do nothing
     } else {
       recognition.onresult = (endEvent) => {
@@ -31,7 +31,6 @@ export default function VoiceInput({ setUserTextInput }: VoiceInputProps) {
         } else {
           console.warn("Failed to get speech result");
         }
-        recognition.onresult = null;
       };
       recognition.start();
     }
