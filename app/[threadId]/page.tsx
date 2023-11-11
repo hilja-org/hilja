@@ -9,11 +9,11 @@ import EchoRingAnimated from "../../components/EchoRingAnimated";
 import EchoRing from "../../components/EchoRing";
 
 export default async function Page({
-  params,
+  params: { threadId },
 }: {
   params: { threadId: string };
 }) {
-  const messages = await getMessages(params.threadId);
+  const messages = await getMessages(threadId);
 
   const botSpeaking = false;
 
@@ -23,30 +23,34 @@ export default async function Page({
         <div className="flex w-full gap-4 mx-2 my-4">
           <output className="flex flex-col items-center justify-center gap-2 flex-1">
             <Message role="assistant">How can I help?</Message>
-            {messages &&
-              messages
-                .flat()
-                .reverse()
-                .map(({ message, role }, index) => {
-                  if (!message) return;
-                  if (message?.type === "image_file") {
-                    return (
-                      <Image
-                        key={index}
-                        src={message.image_file.file_id}
-                        alt="generated bio"
-                        className="rounded-xl shadow-md"
-                      />
-                    );
-                  }
-                  if (message?.type === "text") {
-                    return (
-                      <Message role={role} key={index}>
-                        {message?.text?.value}
-                      </Message>
-                    );
-                  }
-                })}
+            {messages && (
+              <>
+                {messages
+                  .flat()
+                  .reverse()
+                  .map(({ message, role }, index) => {
+                    if (!message) return;
+                    if (message?.type === "image_file") {
+                      return (
+                        <Image
+                          key={index}
+                          src={message.image_file.file_id}
+                          alt="generated bio"
+                          className="rounded-xl shadow-md"
+                        />
+                      );
+                    }
+                    if (message?.type === "text") {
+                      return (
+                        <Message role={role} key={index}>
+                          {message?.text?.value}
+                        </Message>
+                      );
+                    }
+                  })}
+                <audio autoPlay={true} src={`/api/speak/${threadId}`} />
+              </>
+            )}
           </output>
           <Link href="/analytics">
             <AnalyticsIcon />
