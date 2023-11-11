@@ -22,6 +22,11 @@ Additionally, it empowers healthcare professionals by providing valuable insight
 
 ![ui-screenshot](./docs/ui.png)
 
+# Tech Stack
+The Hilja application is implemented using [Next.js](https://nextjs.org) application utilizing [React](https://react.dev) with all the benefits of server-side rendering.
+The backend endpoints call [OpenAI assistant](https://platform.openai.com/docs/assistants/overview) trained on medical data related to chronic pain.
+The user prompts are injected with some sensible limitations, and also using [OpenAI assistant functions](https://platform.openai.com/docs/assistants/tools/function-calling) to provide e.g. links to YouTube videos of various stretch exercises.
+
 # Goals
 
 Imagine a world where chronic pain is no longer a barrier to a vibrant life.
