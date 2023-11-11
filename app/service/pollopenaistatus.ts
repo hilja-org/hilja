@@ -5,20 +5,24 @@ import {
   OpenAIRunStatus,
   openai,
 } from "../openai";
-import { RunSubmitToolOutputsParams } from "openai/resources/beta/threads/runs/runs";
+import type { RunSubmitToolOutputsParams } from "openai/resources/beta/threads/runs/runs";
 import functions from "../openai-functions";
 import { Throw } from "throw-expression";
 
 const DEFAULT_API_POLL_INTERVAL = 1000 * 3;
 
 async function debounceResponse<T>(
-  callback: () => T,
+  callback: () => T | Promise<T>,
   timeout: number,
 ): Promise<T> {
   return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      // Incase callback is not a promise
-      Promise.resolve(callback()).then(resolve).catch(reject);
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    setTimeout(async () => {
+      try {
+        resolve(await callback());
+      } catch (e) {
+        reject(e);
+      }
     }, timeout);
   });
 }
