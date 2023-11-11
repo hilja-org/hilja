@@ -1,16 +1,17 @@
 export default function PlaceholderSVG({
   children,
 }: {
-  children: JSX.Element;
+  children: JSX.Element | null;
 }) {
   return (
-    <div className="relative">
+    <div className="relative h-[200px] w-[200px] grid items-center justify-center">
       <svg
         width="199"
         height="199"
         viewBox="0 0 199 199"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
+        className="absolute -z-10"
       >
         <circle
           opacity="0.3"
@@ -142,7 +143,7 @@ export default function PlaceholderSVG({
           </linearGradient>
         </defs>
       </svg>
-      <div className="absolute top-[40%] left-[42%] ">{children}</div>
+      {children}
     </div>
   );
 }

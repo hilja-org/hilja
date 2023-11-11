@@ -6,15 +6,15 @@ import VoiceInputIndicator from "../components/VoiceInputIndicator";
 import Image from "next/image";
 import Link from "next/link";
 import AnalyticsIcon from "../components/AnalyticsIcon";
-import UserInput from "../components/UserInput";
 import {
   MessageContentImageFile,
   MessageContentText,
   openai,
   OpenAIRunStatus,
 } from "./openai";
+import UserInputForm from "../components/UserInputForm";
 import Message from "../components/Message";
-import MicrophoneIcon from "../components/MicrophoneIcon";
+import VoiceInput from "../components/VoiceInput";
 
 const DEFAULT_API_POLL_INTERVAL = 1000 * 3;
 
@@ -61,6 +61,9 @@ export default async function Page() {
 
   const messages = await getStuff();
 
+  const userSpeaking = false;
+  const botSpeaking = false;
+
   return (
     <div className="flex max-w-5xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
       <main className="w-full flex flex-1 flex-col items-center justify-center text-center px-4">
@@ -92,11 +95,15 @@ export default async function Page() {
 
         <div className="flex-1 grid items-center">
           <PlaceholderSVG>
-            <MicrophoneIcon />
+            {userSpeaking ? (
+              <VoiceInputIndicator />
+            ) : botSpeaking ? null : (
+              <VoiceInput />
+            )}
           </PlaceholderSVG>
         </div>
 
-        <UserInput />
+        <UserInputForm />
 
         <Toaster
           position="top-center"

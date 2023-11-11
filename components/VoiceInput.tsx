@@ -2,8 +2,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import MicrophoneIcon from "./MicrophoneIcon";
+import { FORM_INPUT_NAME_USER_INPUT } from "../app/actions/post-shared";
 
-export default function VoiceInput({ setUserTextInput }: VoiceInputProps) {
+export default function VoiceInput() {
   const [recognition, setRecognition] = useState<
     SpeechRecognition | undefined
   >();
@@ -23,7 +25,13 @@ export default function VoiceInput({ setUserTextInput }: VoiceInputProps) {
           if (result.confidence > 0.5) {
             console.log("Was confident enough to set", result);
             // We are confident enough to send this to API
-            setUserTextInput(result.transcript);
+
+            const $ = document.querySelector.bind(document); // You know this shouldn't be here
+            ($(`#${FORM_INPUT_NAME_USER_INPUT}`) as HTMLInputElement).value =
+              result.transcript;
+            (
+              $(`#${FORM_INPUT_NAME_USER_INPUT}-form`) as HTMLFormElement
+            ).requestSubmit();
           } else {
             // TODO show to user that we didn't understand input
             console.warn("Was not confident enough to process", result);
@@ -36,11 +44,11 @@ export default function VoiceInput({ setUserTextInput }: VoiceInputProps) {
     }
   };
 
-  return <button onClick={onAudioInputStart}>🎙️</button>;
-}
-
-export interface VoiceInputProps {
-  setUserTextInput: (newValue: string) => void;
+  return (
+    <button onClick={onAudioInputStart}>
+      <MicrophoneIcon />
+    </button>
+  );
 }
 
 // See https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API/Using_the_Web_Speech_API
