@@ -58,7 +58,10 @@ export default async function Page() {
           role: message.role,
         };
       });
-    } else if (run.status === OpenAIRunStatus.IN_PROGRESS) {
+    } else if (
+      run.status === OpenAIRunStatus.IN_PROGRESS ||
+      run.status === OpenAIRunStatus.QUEUED
+    ) {
       console.log("in progress");
       return redoAgainAndAgain<ReturnType<typeof getStuff>>(
         getStuff,
