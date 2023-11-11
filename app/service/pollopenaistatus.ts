@@ -8,46 +8,28 @@ import {
 import type { RunSubmitToolOutputsParams } from "openai/resources/beta/threads/runs/runs";
 import functions from "../openai-functions";
 import { Throw } from "throw-expression";
+import { revalidatePath } from "next/cache";
 
-const DEFAULT_API_POLL_INTERVAL = 1000 * 3;
-
-async function debounceResponse<T>(
-  callback: () => T | Promise<T>,
-  timeout: number,
-): Promise<T> {
-  return new Promise((resolve, reject) => {
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    setTimeout(async () => {
-      try {
-        resolve(await callback());
-      } catch (e) {
-        reject(e);
-      }
-    }, timeout);
-  });
-}
-
-type OpenAiMessages = {
+type OpenAiMessage = {
   message: MessageContentText | MessageContentImageFile;
   role: "user" | "assistant";
-}[];
+};
+
+export type MessageResponse = {
+  status: OpenAIRunStatus;
+  messages: OpenAiMessage[];
+};
 
 /**
  * Will poll the API untill there is a resopnse
  */
 export const getMessages = async (
   threadId: string,
-): Promise<
-  | {
-      status: OpenAIRunStatus;
-      messages: OpenAiMessages;
-    }
-  | undefined
-> => {
+): Promise<MessageResponse | undefined> => {
   const runId = cookies().get("runId")?.value;
   if (!runId || !threadId) return;
 
-  let run = await openai.beta.threads.runs.retrieve(threadId, runId);
+  const run = await openai.beta.threads.runs.retrieve(threadId, runId);
   if (run.status === OpenAIRunStatus.COMPLETED) {
     console.log("completed");
     const openAiResponse = await openai.beta.threads.messages.list(threadId);
@@ -62,9 +44,10 @@ export const getMessages = async (
       messages,
     };
   } else if (run.status === OpenAIRunStatus.REQUIRES_ACTION) {
+    revalidatePath("/");
     const required_action = run.required_action;
     if (required_action) {
-      run = await openai.beta.threads.runs.submitToolOutputs(threadId, run.id, {
+      await openai.beta.threads.runs.submitToolOutputs(threadId, run.id, {
         tool_outputs: await Promise.all(
           required_action.submit_tool_outputs.tool_calls.map(
             async ({
@@ -81,18 +64,13 @@ export const getMessages = async (
           ),
         ),
       });
-
-      return debounceResponse<ReturnType<typeof getMessages>>(
-        () => getMessages(threadId),
-        DEFAULT_API_POLL_INTERVAL,
-      );
     }
   }
 
   return makeResponse(run.status);
 };
 
-const makeResponse = (status: string, messages: OpenAiMessages = []) => ({
+const makeResponse = (status: string, messages: OpenAiMessage[] = []) => ({
   status: status as OpenAIRunStatus,
   messages,
 });

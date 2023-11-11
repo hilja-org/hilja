@@ -1,22 +1,18 @@
 /* eslint-disable no-console */
 import { Toaster } from "react-hot-toast";
 import PlaceholderSVG from "../../components/PlaceholderSVG";
-import Image from "next/image";
 import Link from "next/link";
 import AnalyticsIcon from "../../components/AnalyticsIcon";
 import UserInputForm from "../../components/UserInputForm";
 import Message from "../../components/Message";
 import VoiceInput from "../../components/VoiceInput";
-import { getMessages } from "../service/pollopenaistatus";
-import VoiceOutput from "../../components/VoiceOutput";
+import MessageContainer from "../../components/MessageContainer";
 
-export default async function Page({
+export default function Page({
   params: { threadId },
 }: {
   params: { threadId: string };
 }) {
-  const messages = await getMessages(threadId);
-
   const botSpeaking = false;
 
   return (
@@ -25,37 +21,7 @@ export default async function Page({
         <div className="flex w-full gap-4 mx-2 my-4">
           <output className="flex flex-col items-center justify-center gap-2 flex-1">
             <Message role="assistant">How can I help?</Message>
-            {messages && (
-              <>
-                {messages
-                  .flat()
-                  .reverse()
-                  .map(({ message, role }, index) => {
-                    if (!message) return;
-                    if (message?.type === "image_file") {
-                      return (
-                        <Image
-                          key={index}
-                          src={message.image_file.file_id}
-                          alt="generated bio"
-                          className="rounded-xl shadow-md"
-                        />
-                      );
-                    }
-                    if (message?.type === "text") {
-                      return (
-                        <Message role={role} key={index}>
-                          {message?.text?.value}
-                        </Message>
-                      );
-                    }
-                  })}
-                <VoiceOutput
-                  messageCount={messages.length}
-                  audioSource={`/api/speak/${threadId}`}
-                />
-              </>
-            )}
+            <MessageContainer threadId={threadId} />
           </output>
           <Link href="/analytics">
             <AnalyticsIcon />
