@@ -36,7 +36,7 @@ export default function MiddleRing() {
   }, []);
 
   return (
-    <div className="flex-1 grid items-center">
+    <div className="flex-1 grid items-center my-8">
       {botSpeaking ? (
         <EchoRingAnimated />
       ) : (
