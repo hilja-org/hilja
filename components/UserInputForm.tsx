@@ -8,7 +8,7 @@ export default function UserInputForm() {
   return (
     <form
       className="max-w-xl w-full flex gap-1 fixed bottom-5 px-4"
-      action={POST}
+      action={POST as unknown as string}
     >
       <textarea
         rows={1}
@@ -40,3 +40,9 @@ export default function UserInputForm() {
     </form>
   );
 }
+
+// declare global {
+//   interface FormHTMLAttributes {
+//     action: (data: FormData) => Promise<unknown>
+//   }
+// }
