@@ -2,22 +2,28 @@
 
 import { assistantId, openai } from "../openai";
 import { FORM_INPUT_NAME_USER_INPUT } from "./post-shared";
+import { cookies } from "next/headers";
 
 export async function POST(data: FormData) {
-  const thread = await openai.beta.threads.create();
+  let threadId = cookies().get("threadId")?.value ?? undefined;
 
-  await openai.beta.threads.messages.create(thread.id, {
+  if (!threadId) {
+    const thread = await openai.beta.threads.create();
+    threadId = thread.id;
+    cookies().set("threadId", threadId);
+  }
+
+  await openai.beta.threads.messages.create(threadId, {
     role: "user",
     content: ensureString(data.get(FORM_INPUT_NAME_USER_INPUT)),
   });
 
-  const run = await openai.beta.threads.runs.create(thread.id, {
+  const run = await openai.beta.threads.runs.create(threadId, {
     assistant_id: assistantId,
     instructions:
       "The usre knows who you are so there is no need to introduce your self. Focuse on helping the user with their problem.",
   });
-
-  return { runId: run.id, threadId: thread.id };
+  cookies().set("runId", run.id);
 }
 
 const ensureString = (entry: FormDataEntryValue | null): string => {
