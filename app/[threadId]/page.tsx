@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 import { Toaster } from "react-hot-toast";
-import PlaceholderSVG from "../../components/PlaceholderSVG";
 import Image from "next/image";
 import Link from "next/link";
 import AnalyticsIcon from "../../components/AnalyticsIcon";
@@ -8,6 +7,8 @@ import UserInputForm from "../../components/UserInputForm";
 import Message from "../../components/Message";
 import VoiceInput from "../../components/VoiceInput";
 import { getMessages } from "../service/pollopenaistatus";
+import EchoRingAnimated from "../../components/EchoRingAnimated";
+import EchoRing from "../../components/EchoRing";
 
 export default async function Page({
   params,
@@ -55,7 +56,13 @@ export default async function Page({
         </div>
 
         <div className="flex-1 grid items-center">
-          <PlaceholderSVG>{botSpeaking ? null : <VoiceInput />}</PlaceholderSVG>
+          {botSpeaking ? (
+            <EchoRingAnimated />
+          ) : (
+            <EchoRing>
+              <VoiceInput />
+            </EchoRing>
+          )}
         </div>
 
         <UserInputForm />

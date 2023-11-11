@@ -1,5 +1,5 @@
 import { Toaster } from "react-hot-toast";
-import PlaceholderSVG from "../components/PlaceholderSVG";
+import EchoRing from "../components/EchoRing";
 
 import Link from "next/link";
 import AnalyticsIcon from "../components/AnalyticsIcon";
@@ -8,8 +8,6 @@ import Message from "../components/Message";
 import VoiceInput from "../components/VoiceInput";
 
 export default function Page() {
-  const botSpeaking = false;
-
   return (
     <div className="flex max-w-5xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
       <main className="w-full flex flex-1 flex-col items-center justify-center text-center px-4">
@@ -23,7 +21,9 @@ export default function Page() {
         </div>
 
         <div className="flex-1 grid items-center">
-          <PlaceholderSVG>{botSpeaking ? null : <VoiceInput />}</PlaceholderSVG>
+          <EchoRing>
+            <VoiceInput />
+          </EchoRing>
         </div>
 
         <UserInputForm />
