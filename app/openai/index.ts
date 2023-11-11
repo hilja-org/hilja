@@ -8,6 +8,9 @@ export const openai = new OpenAI({
 // The existing run statuses are:
 //     'queued' 'in_progress''requires_action''cancelling''cancelled''failed''completed''expired';
 
+export type MessageContentText =
+  OpenAI.Beta.Threads.Messages.MessageContentText;
+
 export enum OpenAIRunStatus {
   QUEUED = "queued",
   IN_PROGRESS = "in_progress",
