@@ -21,9 +21,10 @@ export async function POST(data: FormData) {
     threadCreated = true;
   }
 
+  const userCurMsg = ensureString(data.get(FORM_INPUT_NAME_USER_INPUT));
   await openai.beta.threads.messages.create(threadId, {
     role: "user",
-    content: ensureString(data.get(FORM_INPUT_NAME_USER_INPUT)),
+    content: userCurMsg,
   });
 
   const run = await openai.beta.threads.runs.create(threadId, {
@@ -32,6 +33,7 @@ export async function POST(data: FormData) {
       "The user knows who you are so there is no need to introduce your self. Focus on helping the user with their problem.",
   });
   cookies().set("runId", run.id);
+  cookies().set("userCurMsg", userCurMsg);
   if (threadCreated) {
     redirect(`/${threadId}`);
   }

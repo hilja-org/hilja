@@ -6,6 +6,7 @@ import Image from "next/image";
 import VoiceOutput from "./VoiceOutput";
 import Message from "./Message";
 import type { MessageResponse } from "../app/service/pollopenaistatus";
+import { FORM_INPUT_NAME_USER_INPUT } from "../app/actions/post-shared";
 
 const DEFAULT_API_POLL_INTERVAL = 1000 * 3;
 
@@ -43,6 +44,16 @@ export default function MessageContainer({ threadId }: { threadId: string }) {
   const [messages, setMessages] = useState<MessageResponse["messages"]>([]);
 
   const runId = getCookie("runId");
+  const userCurMsg = getCookie("userCurMsg");
+
+  if (userCurMsg) {
+    const inputEl = document.querySelector<HTMLInputElement>(
+      `#${FORM_INPUT_NAME_USER_INPUT}`,
+    );
+    if (inputEl) {
+      inputEl.value = "";
+    }
+  }
 
   console.log("DEBUG RUN ID", runId);
 
@@ -53,13 +64,12 @@ export default function MessageContainer({ threadId }: { threadId: string }) {
     fetchMessages(threadId)
       .then(({ messages }) => {
         console.log(messages);
+
+        deleteAllCookies();
         setMessages(messages);
       })
       .catch((err) => {
         console.error(err);
-      })
-      .finally(() => {
-        document.cookie = "";
       });
   }, [threadId, runId]);
 
@@ -88,6 +98,20 @@ export default function MessageContainer({ threadId }: { threadId: string }) {
             );
           }
         })}
+      {userCurMsg && (
+        <>
+          <Message role="user">{decodeURI(userCurMsg)}</Message>
+          <Message role="assistant">
+            {
+              <span className="loading">
+                <span style={{ backgroundColor: "white" }} />
+                <span style={{ backgroundColor: "white" }} />
+                <span style={{ backgroundColor: "white" }} />
+              </span>
+            }
+          </Message>
+        </>
+      )}
       <VoiceOutput
         messageCount={messages.length}
         audioSource={`/api/speak/${threadId}`}
@@ -102,4 +126,14 @@ function getCookie(name: string) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) return parts.pop()?.split(";").shift();
+}
+
+function deleteAllCookies() {
+  const cookies = document.cookie.split(";");
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i];
+    const eqPos = cookie.indexOf("=");
+    const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+  }
 }

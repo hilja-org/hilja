@@ -2,7 +2,7 @@ export default function Message({
   children,
   role,
 }: {
-  children: string;
+  children: string | JSX.Element;
   role: "assistant" | "user";
 }) {
   return (
