@@ -1,11 +1,47 @@
 import { Toaster } from "react-hot-toast";
+import { cookies } from "next/headers";
 import PlaceholderSVG from "../components/PlaceholderSVG";
 import VoiceInputIndicator from "../components/VoiceInputIndicator";
 import Link from "next/link";
 import { AnalyticsIcon } from "../components/AnalyticsIcon";
 import UserInput from "../components/UserInput";
+import { openai, OpenAIRunStatus } from "./openai";
 
-export default function Page() {
+const DEFAULT_API_POLL_INTERVAL = 1000;
+
+export default async function Page() {
+  // const lastMessage = messages[messages.length - 1];
+  // const generatedBios =
+  //   lastMessage?.role === "assistant" ? lastMessage.content : null;
+  const getStuff = async () => {
+    const runId = cookies().get("runId")?.value;
+    const threadId = cookies().get("threadId")?.value;
+    if (!runId || !threadId) return;
+
+    const run = await openai.beta.threads.runs.retrieve(threadId, runId);
+    switch (run.status) {
+      case OpenAIRunStatus.COMPLETED:
+        console.log(run);
+        break;
+      case OpenAIRunStatus.IN_PROGRESS:
+        setTimeout(() => {
+          void getStuff();
+        }, DEFAULT_API_POLL_INTERVAL);
+        void getStuff();
+        return;
+      case OpenAIRunStatus.REQUIRES_ACTION:
+        // @TODO: what now?
+        console.log(run);
+        break;
+      default:
+        // This measn something has failed
+        console.log(run);
+        break;
+    }
+  };
+
+  void getStuff();
+
   return (
     <div className="flex max-w-5xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
       <main className="w-full flex flex-1 flex-col items-center justify-center text-center px-4">
