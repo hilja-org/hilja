@@ -42,48 +42,26 @@ async function fetchMessages(threadId: string): Promise<MessageResponse> {
 export default function MessageContainer({ threadId }: { threadId: string }) {
   const [messages, setMessages] = useState<MessageResponse["messages"]>([]);
 
-  const [isFetching, setIsFetching] = useState(false);
-  const [seenComplete, setSeenComplete] = useState(false);
+  const runId = getCookie("runId");
+
+  console.log("DEBUG RUN ID", runId);
 
   useEffect(() => {
-    if (isFetching) return;
-    if (seenComplete) return;
+    console.log("DEBUG EFFECt", runId);
+    if (runId === undefined) return;
 
-    setIsFetching(true);
     fetchMessages(threadId)
       .then(({ messages }) => {
         console.log(messages);
         setMessages(messages);
-        setIsFetching(false);
-        setSeenComplete(true);
       })
       .catch((err) => {
         console.error(err);
+      })
+      .finally(() => {
+        document.cookie = "";
       });
-  }, [isFetching, threadId, seenComplete]);
-  /** return messages
-    .flat()
-    .reverse()
-    .map(({ message, role }, index) => {
-      if (!message) return;
-      if (message?.type === "image_file") {
-        return (
-          <Image
-            key={index}
-            src={message.image_file.file_id}
-            alt="generated bio"
-            className="rounded-xl shadow-md"
-          />
-        );
-      }
-      if (message?.type === "text") {
-        return (
-          <Message role={role} key={index}>
-            {message?.text?.value}
-          </Message>
-        );
-      }
-    }); */
+  }, [threadId, runId]);
 
   return messages ? (
     <>
@@ -118,4 +96,10 @@ export default function MessageContainer({ threadId }: { threadId: string }) {
   ) : (
     <></>
   );
+}
+
+function getCookie(name: string) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(";").shift();
 }

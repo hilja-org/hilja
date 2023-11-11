@@ -24,7 +24,7 @@ export default function Page() {
           </EchoRing>
         </div>
 
-        <UserInputForm />
+        <UserInputForm threadId={undefined} />
       </main>
     </div>
   );
