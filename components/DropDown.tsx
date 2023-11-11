@@ -17,7 +17,7 @@ interface DropDownProps {
   setVibe: (vibe: VibeType) => void;
 }
 
-let vibes: VibeType[] = ["Professional", "Casual", "Funny"];
+const vibes: VibeType[] = ["Professional", "Casual", "Funny"];
 
 export default function DropDown({ vibe, setVibe }: DropDownProps) {
   return (
@@ -58,7 +58,7 @@ export default function DropDown({ vibe, setVibe }: DropDownProps) {
                     className={classNames(
                       active ? "bg-gray-100 text-gray-900" : "text-gray-700",
                       vibe === vibeItem ? "bg-gray-200" : "",
-                      "px-4 py-2 text-sm w-full text-left flex items-center space-x-2 justify-between"
+                      "px-4 py-2 text-sm w-full text-left flex items-center space-x-2 justify-between",
                     )}
                   >
                     <span>{vibeItem}</span>

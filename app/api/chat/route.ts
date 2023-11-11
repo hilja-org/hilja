@@ -11,7 +11,7 @@ const openai = new OpenAIApi(config);
 export const runtime = "edge";
 
 export async function POST(req: Request) {
-  const { vibe, bio } = await req.json();
+  const { vibe, bio } = (await req.json()) as RequestData;
 
   // Ask OpenAI for a streaming completion given the prompt
   const response = await openai.createChatCompletion({
@@ -26,8 +26,8 @@ export async function POST(req: Request) {
             : null
         }
           Make sure each generated biography is less than 160 characters, has short sentences that are found in Twitter bios, and base them on this context: ${bio}${
-          bio.slice(-1) === "." ? "" : "."
-        }`,
+            bio.slice(-1) === "." ? "" : "."
+          }`,
       },
     ],
   });
@@ -36,4 +36,9 @@ export async function POST(req: Request) {
   const stream = OpenAIStream(response);
   // Respond with the stream
   return new StreamingTextResponse(stream);
+}
+
+export interface RequestData {
+  vibe: unknown;
+  bio: string;
 }
