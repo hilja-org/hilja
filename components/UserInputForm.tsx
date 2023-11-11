@@ -1,5 +1,6 @@
 import { SendIcon } from "../components/SendIcon";
 import { POST } from "../app/api/chat/post";
+import { FORM_INPUT_NAME_USER_INPUT } from "../app/api/chat/post-shared";
 
 export default function UserInputForm() {
   const isLoading = false;
@@ -13,6 +14,7 @@ export default function UserInputForm() {
         rows={1}
         className="w-full rounded-md shadow-sm focus:border-black focus:ring-black bg-teal text-white resize-none"
         placeholder={"Speak or type your answer"}
+        name={FORM_INPUT_NAME_USER_INPUT}
       />
 
       {!isLoading && (
