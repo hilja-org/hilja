@@ -1,16 +1,19 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { assistantId, openai } from "../openai";
 import { FORM_INPUT_NAME_USER_INPUT } from "./post-shared";
 import { cookies } from "next/headers";
 
 export async function POST(data: FormData) {
   let threadId = cookies().get("threadId")?.value ?? undefined;
+  let threadCreated = false;
 
   if (!threadId) {
     const thread = await openai.beta.threads.create();
     threadId = thread.id;
-    cookies().set("threadId", threadId);
+
+    threadCreated = true;
   }
 
   await openai.beta.threads.messages.create(threadId, {
@@ -24,6 +27,9 @@ export async function POST(data: FormData) {
       "The user knows who you are so there is no need to introduce your self. Focus on helping the user with their problem.",
   });
   cookies().set("runId", run.id);
+  if (threadCreated) {
+    redirect(`/${threadId}`);
+  }
 }
 
 const ensureString = (entry: FormDataEntryValue | null): string => {
