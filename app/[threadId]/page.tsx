@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-import { Toaster } from "react-hot-toast";
 import Image from "next/image";
 import Link from "next/link";
 import AnalyticsIcon from "../../components/AnalyticsIcon";
@@ -66,12 +64,6 @@ export default async function Page({
         </div>
 
         <UserInputForm />
-
-        <Toaster
-          position="top-center"
-          reverseOrder={false}
-          toastOptions={{ duration: 2000 }}
-        />
       </main>
     </div>
   );

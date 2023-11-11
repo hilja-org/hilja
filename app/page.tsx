@@ -1,11 +1,9 @@
-import { Toaster } from "react-hot-toast";
-import EchoRing from "../components/EchoRing";
-
 import Link from "next/link";
 import AnalyticsIcon from "../components/AnalyticsIcon";
 import UserInputForm from "../components/UserInputForm";
 import Message from "../components/Message";
 import VoiceInput from "../components/VoiceInput";
+import EchoRing from "../components/EchoRing";
 
 export default function Page() {
   return (
@@ -27,12 +25,6 @@ export default function Page() {
         </div>
 
         <UserInputForm />
-
-        <Toaster
-          position="top-center"
-          reverseOrder={false}
-          toastOptions={{ duration: 2000 }}
-        />
       </main>
     </div>
   );
