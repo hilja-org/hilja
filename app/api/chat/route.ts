@@ -1,44 +1,40 @@
-import { Configuration, OpenAIApi } from "openai-edge";
-import { OpenAIStream, StreamingTextResponse } from "ai";
+import { NextApiResponse } from 'next/types';
+import OpenAI from 'openai';
 
 // Create an OpenAI API client (that's edge friendly!)
-const config = new Configuration({
+const assistantId = process.env.OPENAI_ASSISTANT_ID as string;
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-const openai = new OpenAIApi(config);
 
 // Set the runtime to edge for best performance
 export const runtime = "edge";
 
-export async function POST(req: Request) {
-  const { vibe, bio } = (await req.json()) as RequestData;
+export async function POST() {
+  const thread = await openai.beta.threads.create()
 
-  // Ask OpenAI for a streaming completion given the prompt
-  const response = await openai.createChatCompletion({
-    model: "gpt-3.5-turbo",
-    stream: true,
-    messages: [
-      {
-        role: "user",
-        content: `Generate 2 ${vibe} twitter biographies with no hashtags and clearly labeled "1." and "2.". ${
-          vibe === "Funny"
-            ? "Make sure there is a joke in there and it's a little ridiculous."
-            : null
-        }
-          Make sure each generated biography is less than 160 characters, has short sentences that are found in Twitter bios, and base them on this context: ${bio}${
-            bio.slice(-1) === "." ? "" : "."
-          }`,
-      },
-    ],
-  });
+  const message = await openai.beta.threads.messages.create(
+    thread.id,
+    {
+      role: "user",
+      content: "My back hurts quite bad today."
+    }
+  );
 
-  // Convert the response into a friendly text-stream
-  const stream = OpenAIStream(response);
-  // Respond with the stream
-  return new StreamingTextResponse(stream);
-}
+  const run = await openai.beta.threads.runs.create(
+    thread.id,
+    {
+      assistant_id: assistantId,
+      instructions: "The usre knows who you are so there is no need to introduce your self. Focuse on helping the user with their problem."
+    }
+  );
 
-export interface RequestData {
-  vibe: unknown;
-  bio: string;
+  const response = await openai.beta.threads.runs.retrieve(
+    thread.id,
+    run.id
+  );
+  
+  console.log(response);
+
+  return new Response(JSON.stringify(response), { status: 200 });
 }
