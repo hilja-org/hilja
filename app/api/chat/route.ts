@@ -1,4 +1,4 @@
-import { NextApiResponse } from 'next/types';
+import { NextApiRequest } from 'next/types';
 import OpenAI from 'openai';
 
 // Create an OpenAI API client (that's edge friendly!)
@@ -29,12 +29,17 @@ export async function POST() {
     }
   );
 
-  const response = await openai.beta.threads.runs.retrieve(
-    thread.id,
-    run.id
-  );
-  
-  console.log(response);
+  return new Response(JSON.stringify({runId: run.id, threadId: thread.id}), { status: 200 });
+}
 
-  return new Response(JSON.stringify(response), { status: 200 });
+export async function GET(req: NextApiRequest) {
+  const threadId = req.query.threadId as string;
+  const runId = req.query.runId as string;
+
+  const run = await openai.beta.threads.runs.retrieve(
+    threadId,
+    runId
+  );
+
+  return new Response(JSON.stringify(run), { status: 200 });
 }

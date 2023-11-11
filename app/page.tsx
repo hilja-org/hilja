@@ -141,7 +141,7 @@ export default function Page() {
                 {generatedBios
                   .substring(generatedBios.indexOf("1") + 3)
                   .split("2.")
-                  .map(({instructions}) => {
+                  .map((generatedBio) => {
                     return (
                       <div
                         className="bg-white rounded-xl shadow-md p-4 hover:bg-gray-100 transition cursor-copy border"
