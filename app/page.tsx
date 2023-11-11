@@ -38,7 +38,11 @@ export default async function Page() {
   // const generatedBios =
   //   lastMessage?.role === "assistant" ? lastMessage.content : null;
   const getStuff = async (): Promise<
-    (MessageContentText | MessageContentImageFile)[][] | undefined
+    | {
+        message: MessageContentText | MessageContentImageFile;
+        role: "user" | "assistant";
+      }[]
+    | undefined
   > => {
     const runId = cookies().get("runId")?.value;
     const threadId = cookies().get("threadId")?.value;
@@ -48,7 +52,12 @@ export default async function Page() {
     if (run.status === OpenAIRunStatus.COMPLETED) {
       console.log("completed");
       const openAiResponse = await openai.beta.threads.messages.list(threadId);
-      return openAiResponse.data.map((message) => message.content);
+      return openAiResponse.data.map((message) => {
+        return {
+          message: message.content[0],
+          role: message.role,
+        };
+      });
     } else if (run.status === OpenAIRunStatus.IN_PROGRESS) {
       console.log("in progress");
       return redoAgainAndAgain<ReturnType<typeof getStuff>>(
@@ -96,7 +105,7 @@ export default async function Page() {
         <div className="flex w-full gap-4 mx-2 my-4">
           <output className="flex flex-col items-center justify-center gap-2 flex-1">
             {messages &&
-              messages.flat().map((message, index) => {
+              messages.flat().map(({ message, role }, index) => {
                 if (!message) return;
                 if (message?.type === "image_file") {
                   return (
@@ -110,7 +119,7 @@ export default async function Page() {
                 }
                 if (message?.type === "text") {
                   return (
-                    <Message role="assistant" key={index}>
+                    <Message role={role} key={index}>
                       {message?.text?.value}
                     </Message>
                   );
