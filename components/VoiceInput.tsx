@@ -4,17 +4,22 @@
 import { useEffect, useState } from "react";
 import MicrophoneIcon from "./MicrophoneIcon";
 import { FORM_INPUT_NAME_USER_INPUT } from "../app/actions/post-shared";
+import VoiceInputIndicator from "./VoiceInputIndicator";
 
 export default function VoiceInput() {
   const [recognition, setRecognition] = useState<
     SpeechRecognition | undefined
   >();
+
+  const [isListening, setIsListening] = useState(false);
+
   useEffect(() => {
     setRecognition(initWebSpeech());
   }, []);
 
   const onAudioInputStart = () => {
     console.log("DEBUG", recognition);
+    setIsListening(true);
     if (!recognition) {
       // Either not initialized, or already listening - do nothing
     } else {
@@ -36,6 +41,7 @@ export default function VoiceInput() {
             // TODO show to user that we didn't understand input
             console.warn("Was not confident enough to process", result);
           }
+          setIsListening(false);
         } else {
           console.warn("Failed to get speech result");
         }
@@ -46,7 +52,7 @@ export default function VoiceInput() {
 
   return (
     <button onClick={onAudioInputStart}>
-      <MicrophoneIcon />
+      {isListening ? <VoiceInputIndicator /> : <MicrophoneIcon />}
     </button>
   );
 }

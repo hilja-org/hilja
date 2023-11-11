@@ -30,7 +30,9 @@ async function debounceResponse<T>(
 /**
  * Will poll the API untill there is a resopnse
  */
-export const getMessages = async (): Promise<
+export const getMessages = async (
+  threadId: string,
+): Promise<
   | {
       message: MessageContentText | MessageContentImageFile;
       role: "user" | "assistant";
@@ -38,7 +40,6 @@ export const getMessages = async (): Promise<
   | undefined
 > => {
   const runId = cookies().get("runId")?.value;
-  const threadId = cookies().get("threadId")?.value;
   if (!runId || !threadId) return;
 
   let run = await openai.beta.threads.runs.retrieve(threadId, runId);
@@ -57,7 +58,7 @@ export const getMessages = async (): Promise<
   ) {
     console.log("in progress");
     return debounceResponse<ReturnType<typeof getMessages>>(
-      getMessages,
+      () => getMessages(threadId),
       DEFAULT_API_POLL_INTERVAL,
     );
   } else if (run.status === OpenAIRunStatus.REQUIRES_ACTION) {
@@ -82,7 +83,7 @@ export const getMessages = async (): Promise<
       });
 
       return debounceResponse<ReturnType<typeof getMessages>>(
-        getMessages,
+        () => getMessages(threadId),
         DEFAULT_API_POLL_INTERVAL,
       );
     }
