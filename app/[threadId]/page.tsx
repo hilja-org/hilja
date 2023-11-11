@@ -25,7 +25,7 @@ export default function Page({
 
         <MiddleRing />
 
-        <UserInputForm />
+        <UserInputForm threadId={threadId} />
       </main>
     </div>
   );

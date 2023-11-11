@@ -1,11 +1,14 @@
 import { SendIcon } from "../components/SendIcon";
 import { POST } from "../app/actions/post";
-import { FORM_INPUT_NAME_USER_INPUT } from "../app/actions/post-shared";
+import {
+  FORM_INPUT_NAME_USER_INPUT,
+  FORM_INPUT_NAME_THREAD_ID,
+} from "../app/actions/post-shared";
 
 const buttonStyles =
   "rounded-full font-medium p-2 h-full bg-light-blue text-white";
 
-export default function UserInputForm() {
+export default function UserInputForm({ threadId }: UserInputFormProps) {
   const isLoading = false;
 
   return (
@@ -21,6 +24,10 @@ export default function UserInputForm() {
         name={FORM_INPUT_NAME_USER_INPUT}
         id={FORM_INPUT_NAME_USER_INPUT}
       />
+
+      {!!threadId && (
+        <input hidden value={threadId} name={FORM_INPUT_NAME_THREAD_ID} />
+      )}
 
       {!isLoading && (
         <button className={buttonStyles} type="submit">
@@ -38,4 +45,8 @@ export default function UserInputForm() {
       )}
     </form>
   );
+}
+
+interface UserInputFormProps {
+  threadId: string | undefined;
 }

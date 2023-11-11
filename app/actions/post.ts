@@ -2,14 +2,19 @@
 
 import { redirect } from "next/navigation";
 import { assistantId, openai } from "../openai";
-import { FORM_INPUT_NAME_USER_INPUT } from "./post-shared";
+import {
+  FORM_INPUT_NAME_USER_INPUT,
+  FORM_INPUT_NAME_THREAD_ID,
+} from "./post-shared";
 import { cookies } from "next/headers";
 
 export async function POST(data: FormData) {
-  let threadId = cookies().get("threadId")?.value ?? undefined;
+  let threadId =
+    ensureMaybeString(data.get(FORM_INPUT_NAME_THREAD_ID)) ?? undefined;
   let threadCreated = false;
 
   if (!threadId) {
+    console.log("CREATING THREAD!!!!!");
     const thread = await openai.beta.threads.create();
     threadId = thread.id;
 
@@ -34,6 +39,13 @@ export async function POST(data: FormData) {
 
 const ensureString = (entry: FormDataEntryValue | null): string => {
   if (typeof entry !== "string") {
+    throw new Error("Form entry was not string");
+  }
+  return entry;
+};
+
+const ensureMaybeString = (entry: FormDataEntryValue | null): string | null => {
+  if (entry !== null && typeof entry !== "string") {
     throw new Error("Form entry was not string");
   }
   return entry;
