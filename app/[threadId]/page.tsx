@@ -26,26 +26,29 @@ export default async function Page({
             <Message role="assistant">How can I help?</Message>
             {messages && (
               <>
-                {messages.flat().map(({ message, role }, index) => {
-                  if (!message) return;
-                  if (message?.type === "image_file") {
-                    return (
-                      <Image
-                        key={index}
-                        src={message.image_file.file_id}
-                        alt="generated bio"
-                        className="rounded-xl shadow-md"
-                      />
-                    );
-                  }
-                  if (message?.type === "text") {
-                    return (
-                      <Message role={role} key={index}>
-                        {message?.text?.value}
-                      </Message>
-                    );
-                  }
-                })}
+                {messages
+                  .flat()
+                  .reverse()
+                  .map(({ message, role }, index) => {
+                    if (!message) return;
+                    if (message?.type === "image_file") {
+                      return (
+                        <Image
+                          key={index}
+                          src={message.image_file.file_id}
+                          alt="generated bio"
+                          className="rounded-xl shadow-md"
+                        />
+                      );
+                    }
+                    if (message?.type === "text") {
+                      return (
+                        <Message role={role} key={index}>
+                          {message?.text?.value}
+                        </Message>
+                      );
+                    }
+                  })}
                 <audio autoPlay={true} src="/api/speak" />
               </>
             )}
