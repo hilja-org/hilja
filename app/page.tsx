@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { FormEventHandler, useRef, useState } from "react";
+import { FormEventHandler, useEffect, useRef, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import DropDown, { VibeType } from "../components/DropDown";
 import Footer from "../components/Footer";
@@ -31,10 +31,15 @@ export default function Page() {
       },
     });
 
-  const [recognition] = useState(initWebSpeech());
+  const [recognition, setRecognition] = useState<
+    SpeechRecognition | undefined
+  >();
+  useEffect(() => {
+    setRecognition(initWebSpeech());
+  }, []);
 
   const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
-    recognition.start();
+    recognition?.start();
     setBio(input);
     handleSubmit(e);
   };
