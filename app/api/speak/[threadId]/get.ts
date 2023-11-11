@@ -2,11 +2,14 @@ import { NextResponse } from "next/server";
 import { MessageContentText, openai } from "../../../openai";
 import { Throw } from "throw-expression";
 
-export async function GET({
-  params: { threadId },
-}: {
-  params: { threadId: string };
-}) {
+export async function GET(
+  request: Request,
+  {
+    params: { threadId },
+  }: {
+    params: { threadId: string };
+  },
+) {
   let responseToStream: Response | undefined;
   console.log("DEBUG", threadId);
   if (threadId) {
