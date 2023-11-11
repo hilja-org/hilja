@@ -1,14 +1,11 @@
-/* eslint-disable no-console */
-import { Toaster } from "react-hot-toast";
-import PlaceholderSVG from "../../components/PlaceholderSVG";
 import Image from "next/image";
 import Link from "next/link";
 import AnalyticsIcon from "../../components/AnalyticsIcon";
 import UserInputForm from "../../components/UserInputForm";
 import Message from "../../components/Message";
-import VoiceInput from "../../components/VoiceInput";
 import { getMessages } from "../service/pollopenaistatus";
 import VoiceOutput from "../../components/VoiceOutput";
+import MiddleRing from "../../components/MiddleRing";
 
 export default async function Page({
   params: { threadId },
@@ -16,8 +13,6 @@ export default async function Page({
   params: { threadId: string };
 }) {
   const messages = await getMessages(threadId);
-
-  const botSpeaking = false;
 
   return (
     <div className="flex max-w-5xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
@@ -62,17 +57,9 @@ export default async function Page({
           </Link>
         </div>
 
-        <div className="flex-1 grid items-center">
-          <PlaceholderSVG>{botSpeaking ? null : <VoiceInput />}</PlaceholderSVG>
-        </div>
+        <MiddleRing />
 
         <UserInputForm />
-
-        <Toaster
-          position="top-center"
-          reverseOrder={false}
-          toastOptions={{ duration: 2000 }}
-        />
       </main>
     </div>
   );

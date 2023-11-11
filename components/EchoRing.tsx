@@ -1,4 +1,4 @@
-export default function PlaceholderSVG({
+export default function EchoRing({
   children,
 }: {
   children: JSX.Element | null;
@@ -19,7 +19,6 @@ export default function PlaceholderSVG({
           cy="99.5"
           r="99.5"
           fill="url(#paint0_linear_0_1)"
-          className="animate-pulse duration-75"
         />
         <circle cx="99.5" cy="99.5" r="87.5" fill="url(#paint1_linear_0_1)" />
         <g filter="url(#filter0_ddddf_0_1)">
