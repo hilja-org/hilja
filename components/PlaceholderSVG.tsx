@@ -1,4 +1,8 @@
-export default function PlaceholderSVG() {
+export default function PlaceholderSVG({
+  children,
+}: {
+  children: JSX.Element;
+}) {
   return (
     <svg
       width="199"
@@ -13,41 +17,13 @@ export default function PlaceholderSVG() {
         cy="99.5"
         r="99.5"
         fill="url(#paint0_linear_0_1)"
+        className="animate-pulse duration-75"
       />
       <circle cx="99.5" cy="99.5" r="87.5" fill="url(#paint1_linear_0_1)" />
       <g filter="url(#filter0_ddddf_0_1)">
         <circle cx="99.5" cy="99.5" r="81.5" fill="#012A36" />
       </g>
-      <path
-        d="M64 87L64 112"
-        stroke="#FBFBFB"
-        strokeWidth="12"
-        strokeLinecap="round"
-      />
-      <path
-        d="M82 82L82 117"
-        stroke="#FBFBFB"
-        strokeWidth="12"
-        strokeLinecap="round"
-      />
-      <path
-        d="M118 94L118 107"
-        stroke="#FBFBFB"
-        strokeWidth="12"
-        strokeLinecap="round"
-      />
-      <path
-        d="M136 98L136 102"
-        stroke="#FBFBFB"
-        strokeWidth="12"
-        strokeLinecap="round"
-      />
-      <path
-        d="M100 94L100 106"
-        stroke="#FBFBFB"
-        strokeWidth="12"
-        strokeLinecap="round"
-      />
+      {children}
       <defs>
         <filter
           id="filter0_ddddf_0_1"

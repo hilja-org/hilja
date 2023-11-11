@@ -2,4 +2,3 @@
 export const runtime = "edge";
 
 export * from "./get";
-export * from "./post";
