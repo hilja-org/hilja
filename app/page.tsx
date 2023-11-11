@@ -2,20 +2,27 @@ import { Toaster } from "react-hot-toast";
 import { cookies } from "next/headers";
 import PlaceholderSVG from "../components/PlaceholderSVG";
 import VoiceInputIndicator from "../components/VoiceInputIndicator";
+import Image from "next/image";
 import Link from "next/link";
 import { AnalyticsIcon } from "../components/AnalyticsIcon";
 import UserInput from "../components/UserInput";
-import { MessageContentText, openai, OpenAIRunStatus } from "./openai";
+import {
+  MessageContentImageFile,
+  MessageContentText,
+  openai,
+  OpenAIRunStatus,
+} from "./openai";
 
 const DEFAULT_API_POLL_INTERVAL = 1000 * 3;
 
 async function redoAgainAndAgain<T>(
-  callback: () => Promise<T>,
+  callback: () => T,
   timeout: number,
-) {
+): Promise<T> {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      callback().then(resolve).catch(reject);
+      // Incase callback is not a promise
+      Promise.resolve(callback()).then(resolve).catch(reject);
     }, timeout);
   });
 }
@@ -24,30 +31,28 @@ export default async function Page() {
   // const lastMessage = messages[messages.length - 1];
   // const generatedBios =
   //   lastMessage?.role === "assistant" ? lastMessage.content : null;
-  const getStuff = async (): Promise<MessageContentText[] | undefined> => {
+  const getStuff = async (): Promise<
+    (MessageContentText | MessageContentImageFile)[][] | undefined
+  > => {
     const runId = cookies().get("runId")?.value;
     const threadId = cookies().get("threadId")?.value;
     if (!runId || !threadId) return;
 
     const run = await openai.beta.threads.runs.retrieve(threadId, runId);
-    switch (run.status) {
-      case OpenAIRunStatus.COMPLETED:
-        console.log("completed");
-        // eslint-disable-next-line no-case-declarations
-        const openAiResponse =
-          await openai.beta.threads.messages.list(threadId);
-        return openAiResponse.data.map((message) => message.content);
-      case OpenAIRunStatus.IN_PROGRESS:
-        console.log("in progress");
-        return redoAgainAndAgain(getStuff, DEFAULT_API_POLL_INTERVAL);
-      case OpenAIRunStatus.REQUIRES_ACTION:
-        // @TODO: what now?
-        console.log(run.required_action?.submit_tool_outputs.tool_calls);
-        break;
-      default:
-        // This measn something has failed
-        console.log(run);
-        break;
+    if (run.status === OpenAIRunStatus.COMPLETED) {
+      console.log("completed");
+      const openAiResponse = await openai.beta.threads.messages.list(threadId);
+      return openAiResponse.data.map((message) => message.content);
+    } else if (run.status === OpenAIRunStatus.IN_PROGRESS) {
+      console.log("in progress");
+      return redoAgainAndAgain<ReturnType<typeof getStuff>>(
+        getStuff,
+        DEFAULT_API_POLL_INTERVAL,
+      );
+    } else if (run.status === OpenAIRunStatus.REQUIRES_ACTION) {
+      console.log("requires action");
+    } else {
+      console.log("I thing there is something wrong state: ", run.status);
     }
   };
 
@@ -59,10 +64,23 @@ export default async function Page() {
         <div className="flex">
           <output className="space-y-10 my-10">
             {messages && (
-            <div className="space-y-8 flex flex-col items-center justify-center max-w-xl mx-auto">
-              {messages.flat().map((message, index) => {
-                return <div key={index}>{message?.text?.value}</div>;
-                /* return (
+              <div className="space-y-8 flex flex-col items-center justify-center max-w-xl mx-auto">
+                {messages.flat().map((message, index) => {
+                  if (!message) return;
+                  if (message?.type === "image_file") {
+                    return (
+                      <Image
+                        key={index}
+                        src={message.image_file.file_id}
+                        alt="generated bio"
+                        className="rounded-xl shadow-md"
+                      />
+                    );
+                  }
+                  if (message?.type === "text") {
+                    return <div key={index}>{message?.text?.value}</div>;
+                  }
+                  /* return (
                   <div
                     className="bg-teal rounded-xl shadow-md p-4 hover:bg-teal/80 transition border"
                     onClick={() => {
@@ -77,9 +95,9 @@ export default async function Page() {
                   </div>
                 );
                 )*/
-              })}
-            </div>
-          )}
+                })}
+              </div>
+            )}
           </output>
           <Link href="/analytics">
             <AnalyticsIcon />
