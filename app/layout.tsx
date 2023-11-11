@@ -29,7 +29,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <body className="bg-dark-teal text-white">
         {children}
         <Analytics />
       </body>

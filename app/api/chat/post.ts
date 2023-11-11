@@ -1,3 +1,5 @@
+"use server";
+
 import { assistantId, openai } from "../../openai";
 
 export async function POST() {
