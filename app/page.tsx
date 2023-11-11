@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Toaster } from "react-hot-toast";
 import { cookies } from "next/headers";
 import PlaceholderSVG from "../components/PlaceholderSVG";
@@ -40,19 +41,19 @@ export default async function Page() {
 
     const run = await openai.beta.threads.runs.retrieve(threadId, runId);
     if (run.status === OpenAIRunStatus.COMPLETED) {
-      // console.log("completed");
+      console.log("completed");
       const openAiResponse = await openai.beta.threads.messages.list(threadId);
       return openAiResponse.data.map((message) => message.content);
     } else if (run.status === OpenAIRunStatus.IN_PROGRESS) {
-      // console.log("in progress");
+      console.log("in progress");
       return redoAgainAndAgain<ReturnType<typeof getStuff>>(
         getStuff,
         DEFAULT_API_POLL_INTERVAL,
       );
     } else if (run.status === OpenAIRunStatus.REQUIRES_ACTION) {
-      // console.log("requires action");
+      console.log("requires action");
     } else {
-      // console.log("I thing there is something wrong state: ", run.status);
+      console.log("I thing there is something wrong state: ", run.status);
     }
   };
 
