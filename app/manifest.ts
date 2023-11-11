@@ -8,7 +8,7 @@ export default function manifest(): MetadataRoute.Manifest {
       "AI-powered solution providing personalised approach to pain relief, reducing the need for medication",
     start_url: "/",
     id: "/",
-    display: "standalone",
+    display: "fullscreen",
     background_color: "#012A36",
     theme_color: "#034F65",
     icons: [
