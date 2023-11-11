@@ -1,8 +1,9 @@
+/* eslint-disable no-console */
 "use client";
 
 import { useEffect, useState } from "react";
 
-export default function VoiceInput() {
+export default function VoiceInput({ setUserTextInput }: VoiceInputProps) {
   const [recognition, setRecognition] = useState<
     SpeechRecognition | undefined
   >();
@@ -10,7 +11,37 @@ export default function VoiceInput() {
     setRecognition(initWebSpeech());
   }, []);
 
-  return <button onClick={() => recognition?.start()}>🎙️</button>;
+  const onAudioInputStart = () => {
+    console.log("DEBUG", recognition);
+    if (!recognition || recognition.onresult) {
+      // Either not initialized, or already listening - do nothing
+    } else {
+      recognition.onresult = (endEvent) => {
+        console.log("SPEECH RESULTS", endEvent);
+        const result = endEvent.results?.[0]?.[0];
+        if (result) {
+          if (result.confidence > 0.5) {
+            console.log("Was confident enough to set", result);
+            // We are confident enough to send this to API
+            setUserTextInput(result.transcript);
+          } else {
+            // TODO show to user that we didn't understand input
+            console.warn("Was not confident enough to process", result);
+          }
+        } else {
+          console.warn("Failed to get speech result");
+        }
+        recognition.onresult = null;
+      };
+      recognition.start();
+    }
+  };
+
+  return <button onClick={onAudioInputStart}>🎙️</button>;
+}
+
+export interface VoiceInputProps {
+  setUserTextInput: (newValue: string) => void;
 }
 
 // See https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API/Using_the_Web_Speech_API
@@ -34,12 +65,7 @@ const initWebSpeech = () => {
   recognition.interimResults = false;
   recognition.maxAlternatives = 1;
 
-  recognition.onresult = (evt) => {
-    // eslint-disable-next-line no-console
-    console.log("DEBUG: SPEECH RESULT", evt.results, evt);
-    // eslint-disable-next-line no-console
-    console.log("SPEECH FINAL RESULT", evt.results[0]?.[0]?.transcript);
-  };
+  recognition.onresult = null;
   recognition.onspeechend = (evt) => {
     // eslint-disable-next-line no-console
     console.log("DEBUG: SPEECH END", evt);
