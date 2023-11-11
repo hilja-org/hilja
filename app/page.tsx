@@ -1,14 +1,9 @@
 import { Toaster } from "react-hot-toast";
 import PlaceholderSVG from "../components/PlaceholderSVG";
 import VoiceInputIndicator from "../components/VoiceInputIndicator";
-import VoiceInput from "../components/VoiceInput";
-import UserInputForm from "../components/UserInputForm";
+import UserInput from "../components/UserInput";
 
 export default function Page() {
-  // const lastMessage = messages[messages.length - 1];
-  // const generatedBios =
-  //   lastMessage?.role === "assistant" ? lastMessage.content : null;
-
   return (
     <div className="flex max-w-5xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
       <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mt-12 sm:mt-20">
@@ -42,8 +37,7 @@ export default function Page() {
           <VoiceInputIndicator />
         </PlaceholderSVG>
 
-        <UserInputForm />
-        <VoiceInput />
+        <UserInput />
 
         <Toaster
           position="top-center"
