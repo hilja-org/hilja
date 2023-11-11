@@ -1,6 +1,6 @@
 import { SendIcon } from "../components/SendIcon";
-import { POST } from "../app/api/chat/post";
-import { FORM_INPUT_NAME_USER_INPUT } from "../app/api/chat/post-shared";
+import { POST } from "../app/actions/post";
+import { FORM_INPUT_NAME_USER_INPUT } from "../app/actions/post-shared";
 
 export default function UserInputForm() {
   const isLoading = false;

@@ -1,6 +1,6 @@
 "use server";
 
-import { assistantId, openai } from "../../openai";
+import { assistantId, openai } from "../openai";
 import { FORM_INPUT_NAME_USER_INPUT } from "./post-shared";
 
 export async function POST(data: FormData) {
