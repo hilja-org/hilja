@@ -14,6 +14,7 @@ import {
   OpenAIRunStatus,
 } from "./openai";
 import Message from "../components/Message";
+import MicrophoneIcon from "../components/MicrophoneIcon";
 
 const DEFAULT_API_POLL_INTERVAL = 1000 * 3;
 
@@ -91,7 +92,7 @@ export default async function Page() {
 
         <div className="flex-1 grid items-center">
           <PlaceholderSVG>
-            <VoiceInputIndicator />
+            <MicrophoneIcon />
           </PlaceholderSVG>
         </div>
 
