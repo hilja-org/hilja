@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { useRef, useState } from 'react';
-import { Toaster, toast } from 'react-hot-toast';
-import DropDown, { VibeType } from '../components/DropDown';
-import Footer from '../components/Footer';
-import Github from '../components/GitHub';
-import Header from '../components/Header';
-import { useChat } from 'ai/react';
+import Image from "next/image";
+import { useRef, useState } from "react";
+import { Toaster, toast } from "react-hot-toast";
+import DropDown, { VibeType } from "../components/DropDown";
+import Footer from "../components/Footer";
+import Github from "../components/GitHub";
+import Header from "../components/Header";
+import { useChat } from "ai/react";
 
 export default function Page() {
-  const [bio, setBio] = useState('');
-  const [vibe, setVibe] = useState<VibeType>('Professional');
+  const [bio, setBio] = useState("");
+  const [vibe, setVibe] = useState<VibeType>("Professional");
   const bioRef = useRef<null | HTMLDivElement>(null);
 
   const scrollToBios = () => {
     if (bioRef.current !== null) {
-      bioRef.current.scrollIntoView({ behavior: 'smooth' });
+      bioRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -37,7 +37,8 @@ export default function Page() {
   };
 
   const lastMessage = messages[messages.length - 1];
-  const generatedBios = lastMessage?.role === "assistant" ? lastMessage.content : null;
+  const generatedBios =
+    lastMessage?.role === "assistant" ? lastMessage.content : null;
 
   return (
     <div className="flex max-w-5xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
@@ -66,7 +67,7 @@ export default function Page() {
               className="mb-5 sm:mb-0"
             />
             <p className="text-left font-medium">
-              Copy your current bio{' '}
+              Copy your current bio{" "}
               <span className="text-slate-500">
                 (or write a few sentences about yourself)
               </span>
@@ -79,7 +80,7 @@ export default function Page() {
             rows={4}
             className="w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black my-5"
             placeholder={
-              'e.g. Senior Developer Advocate @vercel. Tweeting about web development, AI, and React / Next.js. Writing nutlope.substack.com.'
+              "e.g. Senior Developer Advocate @vercel. Tweeting about web development, AI, and React / Next.js. Writing nutlope.substack.com."
             }
           />
           <div className="flex mb-5 items-center space-x-3">
@@ -104,9 +105,9 @@ export default function Page() {
               disabled
             >
               <span className="loading">
-                <span style={{ backgroundColor: 'white' }} />
-                <span style={{ backgroundColor: 'white' }} />
-                <span style={{ backgroundColor: 'white' }} />
+                <span style={{ backgroundColor: "white" }} />
+                <span style={{ backgroundColor: "white" }} />
+                <span style={{ backgroundColor: "white" }} />
               </span>
             </button>
           )}
@@ -130,16 +131,16 @@ export default function Page() {
               </div>
               <div className="space-y-8 flex flex-col items-center justify-center max-w-xl mx-auto">
                 {generatedBios
-                  .substring(generatedBios.indexOf('1') + 3)
-                  .split('2.')
+                  .substring(generatedBios.indexOf("1") + 3)
+                  .split("2.")
                   .map((generatedBio) => {
                     return (
                       <div
                         className="bg-white rounded-xl shadow-md p-4 hover:bg-gray-100 transition cursor-copy border"
                         onClick={() => {
                           navigator.clipboard.writeText(generatedBio);
-                          toast('Bio copied to clipboard', {
-                            icon: '✂️',
+                          toast("Bio copied to clipboard", {
+                            icon: "✂️",
                           });
                         }}
                         key={generatedBio}
