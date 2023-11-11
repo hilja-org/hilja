@@ -1,9 +1,10 @@
 "use client";
 
-import { FormEventHandler, useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import { useChat } from "ai/react";
 import PlaceholderSVG from "../components/PlaceholderSVG";
+import UserInputForm from "../components/UserInputform";
 
 export default function Page() {
   const [bio, setBio] = useState("");
@@ -24,18 +25,6 @@ export default function Page() {
         scrollToBios();
       },
     });
-
-  const [recognition, setRecognition] = useState<
-    SpeechRecognition | undefined
-  >();
-  useEffect(() => {
-    setRecognition(initWebSpeech());
-  }, []);
-
-  const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
-    setBio(input);
-    handleSubmit(e);
-  };
 
   const lastMessage = messages[messages.length - 1];
   const generatedBios =
@@ -72,37 +61,7 @@ export default function Page() {
 
         <PlaceholderSVG />
 
-        <form className="max-w-xl w-full flex gap-1" onSubmit={onSubmit}>
-          <textarea
-            value={input}
-            onChange={handleInputChange}
-            rows={1}
-            className="w-full rounded-md shadow-sm focus:border-black focus:ring-black bg-teal text-white resize-none"
-            placeholder={"Speak or type your answer"}
-          />
-          <button onClick={() => recognition?.start()}>🎙️</button>
-
-          {!isLoading && (
-            <button
-              className="rounded-xl font-medium px-4 py-2 h-full bg-black/80 text-white"
-              type="submit"
-            >
-              &rarr;
-            </button>
-          )}
-          {isLoading && (
-            <button
-              className="rounded-xl font-medium px-4 py-2 h-full bg-black/80 text-white"
-              disabled
-            >
-              <span className="loading">
-                <span style={{ backgroundColor: "white" }} />
-                <span style={{ backgroundColor: "white" }} />
-                <span style={{ backgroundColor: "white" }} />
-              </span>
-            </button>
-          )}
-        </form>
+        <UserInputForm />
         <Toaster
           position="top-center"
           reverseOrder={false}
@@ -112,50 +71,3 @@ export default function Page() {
     </div>
   );
 }
-
-// See https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API/Using_the_Web_Speech_API
-const initWebSpeech = () => {
-  const recognitionCtor =
-    window.SpeechRecognition || window.webkitSpeechRecognition;
-
-  const recognition = new recognitionCtor();
-
-  // const grammarListCtor =
-  //   window.SpeechGrammarList || window.webkitSpeechGrammarList;
-  // const grammarList = new grammarListCtor();
-  // grammarList.addFromString(
-  //   "#JSGF V1.0; grammar colors; public <color> = aqua | azure | beige | bisque | black | blue | brown | chocolate | coral | crimson | cyan | fuchsia | ghostwhite | gold | goldenrod | gray | green | indigo | ivory | khaki | lavender | lime | linen | magenta | maroon | moccasin | navy | olive | orange | orchid | peru | pink | plum | purple | red | salmon | sienna | silver | snow | tan | teal | thistle | tomato | turquoise | violet | white | yellow ;",
-  //   1,
-  // );
-
-  // recognition.grammars = grammarList;
-  recognition.continuous = false;
-  recognition.lang = "en-US";
-  recognition.interimResults = false;
-  recognition.maxAlternatives = 1;
-
-  recognition.onresult = (evt) => {
-    // eslint-disable-next-line no-console
-    console.log("DEBUG: SPEECH RESULT", evt.results, evt);
-    // eslint-disable-next-line no-console
-    console.log("SPEECH FINAL RESULT", evt.results[0]?.[0]?.transcript);
-  };
-  recognition.onspeechend = (evt) => {
-    // eslint-disable-next-line no-console
-    console.log("DEBUG: SPEECH END", evt);
-    recognition.stop();
-  };
-  recognition.onnomatch = (evt) => {
-    // eslint-disable-next-line no-console
-    console.log("DEBUG: SPEECH NO MATCH", evt);
-  };
-  recognition.onerror = (evt) => {
-    // eslint-disable-next-line no-console
-    console.log("DEBUG: SPEECH ERROR", evt);
-  };
-
-  return recognition;
-
-  // const SpeechRecognitionEvent =
-  //   window.SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent;
-};
