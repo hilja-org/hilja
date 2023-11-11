@@ -8,14 +8,13 @@ import UserInputForm from "../../components/UserInputForm";
 import Message from "../../components/Message";
 import VoiceInput from "../../components/VoiceInput";
 import { getMessages } from "../service/pollopenaistatus";
-import { threadId } from "worker_threads";
 
 export default async function Page({
-  params,
+  params: { threadId },
 }: {
   params: { threadId: string };
 }) {
-  const messages = await getMessages(params.threadId);
+  const messages = await getMessages(threadId);
 
   const botSpeaking = false;
 
