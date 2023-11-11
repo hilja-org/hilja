@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { FormEventHandler, useEffect, useRef, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import DropDown, { VibeType } from "../components/DropDown";
 import Footer from "../components/Footer";
@@ -31,7 +31,15 @@ export default function Page() {
       },
     });
 
-  const onSubmit = (e: any) => {
+  const [recognition, setRecognition] = useState<
+    SpeechRecognition | undefined
+  >();
+  useEffect(() => {
+    setRecognition(initWebSpeech());
+  }, []);
+
+  const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
+    recognition?.start();
     setBio(input);
     handleSubmit(e);
   };
@@ -138,7 +146,7 @@ export default function Page() {
                       <div
                         className="bg-white rounded-xl shadow-md p-4 hover:bg-gray-100 transition cursor-copy border"
                         onClick={() => {
-                          navigator.clipboard.writeText(generatedBio);
+                          void navigator.clipboard.writeText(generatedBio);
                           toast("Bio copied to clipboard", {
                             icon: "✂️",
                           });
@@ -158,3 +166,50 @@ export default function Page() {
     </div>
   );
 }
+
+// See https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API/Using_the_Web_Speech_API
+const initWebSpeech = () => {
+  const recognitionCtor =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  const recognition = new recognitionCtor();
+
+  // const grammarListCtor =
+  //   window.SpeechGrammarList || window.webkitSpeechGrammarList;
+  // const grammarList = new grammarListCtor();
+  // grammarList.addFromString(
+  //   "#JSGF V1.0; grammar colors; public <color> = aqua | azure | beige | bisque | black | blue | brown | chocolate | coral | crimson | cyan | fuchsia | ghostwhite | gold | goldenrod | gray | green | indigo | ivory | khaki | lavender | lime | linen | magenta | maroon | moccasin | navy | olive | orange | orchid | peru | pink | plum | purple | red | salmon | sienna | silver | snow | tan | teal | thistle | tomato | turquoise | violet | white | yellow ;",
+  //   1,
+  // );
+
+  // recognition.grammars = grammarList;
+  recognition.continuous = false;
+  recognition.lang = "en-US";
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  recognition.onresult = (evt) => {
+    // eslint-disable-next-line no-console
+    console.log("DEBUG: SPEECH RESULT", evt.results, evt);
+    // eslint-disable-next-line no-console
+    console.log("SPEECH FINAL RESULT", evt.results[0]?.[0]?.transcript);
+  };
+  recognition.onspeechend = (evt) => {
+    // eslint-disable-next-line no-console
+    console.log("DEBUG: SPEECH END", evt);
+    recognition.stop();
+  };
+  recognition.onnomatch = (evt) => {
+    // eslint-disable-next-line no-console
+    console.log("DEBUG: SPEECH NO MATCH", evt);
+  };
+  recognition.onerror = (evt) => {
+    // eslint-disable-next-line no-console
+    console.log("DEBUG: SPEECH ERROR", evt);
+  };
+
+  return recognition;
+
+  // const SpeechRecognitionEvent =
+  //   window.SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent;
+};
