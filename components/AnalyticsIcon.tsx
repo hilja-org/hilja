@@ -1,4 +1,4 @@
-export function AnalyticsIcon() {
+export default function AnalyticsIcon() {
   return (
     <svg
       width="24"
