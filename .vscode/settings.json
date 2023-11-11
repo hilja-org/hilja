@@ -1,3 +1,14 @@
 {
-  "dotenv.enableAutocloaking": false
+  "dotenv.enableAutocloaking": false,
+  "editor.formatOnSave": true,
+  "eslint.format.enable": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
 }
