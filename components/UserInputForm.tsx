@@ -10,7 +10,7 @@ export default function UserInputForm() {
 
   return (
     <form
-      className="max-w-xl w-full flex gap-2 px-2"
+      className="max-w-xl w-full flex gap-2"
       action={POST as unknown as string}
       id={`${FORM_INPUT_NAME_USER_INPUT}-form`}
     >
