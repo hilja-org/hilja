@@ -8,6 +8,7 @@ import UserInputForm from "../../components/UserInputForm";
 import Message from "../../components/Message";
 import VoiceInput from "../../components/VoiceInput";
 import { getMessages } from "../service/pollopenaistatus";
+import VoiceOutput from "../../components/VoiceOutput";
 
 export default async function Page({
   params: { threadId },
@@ -49,7 +50,10 @@ export default async function Page({
                       );
                     }
                   })}
-                <audio autoPlay={true} src={`/api/speak/${threadId}`} />
+                <VoiceOutput
+                  messageCount={messages.length}
+                  audioSource={`/api/speak/${threadId}`}
+                />
               </>
             )}
           </output>
