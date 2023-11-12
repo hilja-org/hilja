@@ -14,7 +14,6 @@ export async function POST(data: FormData) {
   let threadCreated = false;
 
   if (!threadId) {
-    console.log("CREATING THREAD!!!!!");
     const thread = await openai.beta.threads.create();
     threadId = thread.id;
 

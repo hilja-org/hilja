@@ -55,16 +55,11 @@ export default function MessageContainer({ threadId }: { threadId: string }) {
     }
   }
 
-  console.log("DEBUG RUN ID", runId);
-
   useEffect(() => {
-    console.log("DEBUG EFFECt", runId);
     if (runId === undefined) return;
 
     fetchMessages(threadId)
       .then(({ messages }) => {
-        console.log(messages);
-
         deleteAllCookies();
         setMessages(messages);
       })
@@ -90,7 +85,7 @@ export default function MessageContainer({ threadId }: { threadId: string }) {
               <Image
                 key={index}
                 src={message.image_file.file_id}
-                alt="generated bio"
+                alt=""
                 className="rounded-xl shadow-md"
               />
             );

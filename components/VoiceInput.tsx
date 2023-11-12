@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -18,17 +17,14 @@ export default function VoiceInput() {
   }, []);
 
   const onAudioInputStart = () => {
-    console.log("DEBUG", recognition);
     setIsListening(true);
     if (!recognition) {
       // Either not initialized, or already listening - do nothing
     } else {
       recognition.onresult = (endEvent) => {
-        console.log("SPEECH RESULTS", endEvent);
         const result = endEvent.results?.[0]?.[0];
         if (result) {
           if (result.confidence > 0.5) {
-            console.log("Was confident enough to set", result);
             // We are confident enough to send this to API
 
             const $ = document.querySelector.bind(document); // You know this shouldn't be here
@@ -64,37 +60,15 @@ const initWebSpeech = () => {
 
   const recognition = new recognitionCtor();
 
-  // const grammarListCtor =
-  //   window.SpeechGrammarList || window.webkitSpeechGrammarList;
-  // const grammarList = new grammarListCtor();
-  // grammarList.addFromString(
-  //   "#JSGF V1.0; grammar colors; public <color> = aqua | azure | beige | bisque | black | blue | brown | chocolate | coral | crimson | cyan | fuchsia | ghostwhite | gold | goldenrod | gray | green | indigo | ivory | khaki | lavender | lime | linen | magenta | maroon | moccasin | navy | olive | orange | orchid | peru | pink | plum | purple | red | salmon | sienna | silver | snow | tan | teal | thistle | tomato | turquoise | violet | white | yellow ;",
-  //   1,
-  // );
-
-  // recognition.grammars = grammarList;
   recognition.continuous = false;
   recognition.lang = "en-US";
   recognition.interimResults = false;
   recognition.maxAlternatives = 1;
 
   recognition.onresult = null;
-  recognition.onspeechend = (evt) => {
-    // eslint-disable-next-line no-console
-    console.log("DEBUG: SPEECH END", evt);
+  recognition.onspeechend = () => {
     recognition.stop();
-  };
-  recognition.onnomatch = (evt) => {
-    // eslint-disable-next-line no-console
-    console.log("DEBUG: SPEECH NO MATCH", evt);
-  };
-  recognition.onerror = (evt) => {
-    // eslint-disable-next-line no-console
-    console.log("DEBUG: SPEECH ERROR", evt);
   };
 
   return recognition;
-
-  // const SpeechRecognitionEvent =
-  //   window.SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent;
 };

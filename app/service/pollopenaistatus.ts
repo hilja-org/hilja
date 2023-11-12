@@ -31,7 +31,6 @@ export const getMessages = async (
 
   const run = await openai.beta.threads.runs.retrieve(threadId, runId);
   if (run.status === OpenAIRunStatus.COMPLETED) {
-    console.log("completed");
     const openAiResponse = await openai.beta.threads.messages.list(threadId);
     const messages = openAiResponse.data.map((message) => {
       return {
@@ -55,7 +54,6 @@ export const getMessages = async (
               function: { name, arguments: argsString },
             }): Promise<RunSubmitToolOutputsParams.ToolOutput> => ({
               tool_call_id: id,
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unused-vars
               output: await (
                 functions[name] ??
                 Throw(`Implement support for function "${name}"`)
