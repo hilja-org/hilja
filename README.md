@@ -2,6 +2,10 @@
 
 This repository hosts ✨[Hilja App](https://hilja.app/)✨ built for [Junction 2023 Hackathon](https://eu.junctionplatform.com/dashboard/event/junction-2023), for the challenge related to chronic pain and treatments related to it.
 
+[Video pitch](https://youtu.be/oxy67143Wj8?si=sPN9YhoLuspCBEGr)
+
+From idea to prototype on [Figma](https://www.figma.com/file/pcJR9tlaIJ15ZIO1uB4nK6/Junction-2023---Hilja)
+
 # Why
 We're excited to introduce Hilja – a AI powered solution that provides personalised approach to pain relief, reducing the need for medication.
 Chronic pain affects 20 percent of the global population, impacting daily life, and self reliance on pain relievers has created social challenges.
