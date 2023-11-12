@@ -42,10 +42,10 @@ export default function Message({
         <Image
           src={`https://img.youtube.com/vi/${
             youtubeLinks[0].split("=")[1]
-          }/0.jpg`}
+          }/maxresdefault.jpg`}
           alt=""
           width="100"
-          height="60"
+          height="56"
         />
       )}
     </div>
